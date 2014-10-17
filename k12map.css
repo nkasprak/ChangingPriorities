@@ -1,0 +1,80 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	font-family:"myriad-pro",helvetica,arial,sans-serif;
+	margin:0px;
+	padding:0px;	
+}
+
+
+
+input, select {
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
+	line-height:100%;	
+}
+
+h1 {font-size:21pt}
+h2 {font-size:16pt}
+
+h1.title {
+	margin-top:0px;
+	padding-top:0px;
+	margin-bottom:5px;
+	padding-bottom:5px;	
+}
+
+h2 {
+	margin-top:0px;
+	padding-top:0px;	
+}
+
+
+select#stateLocal {
+	font-size:16pt;
+	font-weight:700;	
+}
+
+#wrapper {
+	position:relative;
+	
+	max-width:525px;
+	margin-left:auto;
+	margin-right:auto;
+	width: 525px;	
+}
+
+#map {
+	width:100%;
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;	
+	position:relative;
+}
+
+#map .popup {
+	position:absolute;
+	display:block;
+	background-color:#E1E1E1;
+	font-size:16px;
+	padding:5px;
+	border: 1px solid #aaa;	
+}
+
+#map .popup h4 {
+	margin-top:0px;
+	margin-bottom:0px;	
+}
+
+#map .popup ul {
+	margin-top:0px;
+	margin-bottom:0px;
+	margin-left:0px;
+	padding-left:30px;
+}
+
+#map text {
+	cursor:pointer;	
+}
