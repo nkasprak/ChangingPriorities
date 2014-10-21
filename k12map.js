@@ -82,6 +82,15 @@ var k12map = (function() {
 				
 			}
 			
+			function setSelectors() {
+				for (var dataSet in m.data.theData) {
+					if (!m.data.theData[dataSet].hideFromMap) {
+						$("#dataSet").append("<option value=\"" + dataSet + "\">" + m.data.meta[dataSet].shortName + "</option>");
+					}
+				}
+			}
+			setSelectors();
+			
 			m.paper = Raphael(m.mapDivID,m.width,m.height);
 			
 			for (var state in map_paths) {
@@ -93,16 +102,22 @@ var k12map = (function() {
 				}
 			}
 			
+			m.activeDataset = "Inc_Rate";
 			
 			
-			m.calcStateColors(0);
+			
+			
+			/*m.activeYear = 1978;*/
 			
 			var makeLegend = function() {
-				m.legend = m.paper.rect(m.width*.1,m.height*.9,m.width*.8,m.height*.035);
+				var height = $("#legend").height();
+				var width = $("#legend").width();
+				m.legendPaper = Raphael("legend",width,height);
+				m.legend = m.legendPaper.rect(0,0,width,height*.5);
 				m.legend.attr({"stroke":"#aaa","stroke-width":0.8});
-				m.legendLeftText = m.paper.text(m.width*.1,m.height*.96,"");
-				m.legendRightText = m.paper.text(m.width*.9,m.height*.96,"");
-				m.legendMiddleText = m.paper.text(m.width*.5,m.height*.96,"0%");
+				m.legendLeftText = m.legendPaper.text(0,height*.7,"").attr({'text-anchor':'start'});
+				m.legendRightText = m.legendPaper.text(width,height*.7,"").attr({'text-anchor':'end'});
+				m.legendMiddleText = m.legendPaper.text(width*.5,height*.5,"0%");
 				
 				
 				var attrs = {
@@ -116,6 +131,25 @@ var k12map = (function() {
 			}
 			makeLegend();
 			
+			function slideChangeFunc(event, ui) {
+				var year = ui.value;
+				m.activeYear = year;
+				m.calcStateColors(m.activeDataset,m.activeYear);
+				m.applyStateColors(0);
+				$("#yearSlider .ui-slider-handle").html("<span>" + year + "</span>");
+			}
+			$("#yearSlider").slider({
+				min: 1978,
+				max: 2013,
+				value: 1978,
+				slide: slideChangeFunc
+			});
+			
+			slideChangeFunc(null,{value:1978});
+			
+			
+			m.calcStateColors("Inc_Rate", m.activeYear);
+			
 			m.applyStateColors();
 			
 			$("#map").on("mouseleave","div.popup",function() {
@@ -127,7 +161,12 @@ var k12map = (function() {
 			});
 			
 			$("#map").on("mousemove",function(e) {
-				
+				var tag = $(e.target).prop("tagName");
+				if (tag == "svg") {
+					clearTimeout(m.fadeTimer);
+					clearTimeout(m.popupTimer);
+					m.fadeoutPopups();
+				}
 				if (initialized) {
 					if ($(e.target).prop("tagName") == "path") {
 						m.mousePos.x = e.offsetX;
@@ -137,12 +176,29 @@ var k12map = (function() {
 				
 			});
 			
-			$("select#stateLocal").change(function() {
-				var dataIndex = {"state":0,"stateAndLocal":1}[$(this).val()];
-				m.activeDataset = dataIndex;
-				m.calcStateColors(dataIndex);
-				m.applyStateColors(400);
-			});
+			
+			
+			$("select#dataSet").trigger("change");
+			
+			
+			
+			
+			function drawSliderLines() {
+				for (var year=1978;year<=2013;year++) {
+					var percent = Math.round((year-1978)/(2013-1978)*1000)/10;
+					var style = "left:" + percent + "%";
+					if (year%5==0) {
+						style += ";height:10px;top:-5px;"
+					} 
+					if ($.inArray(year,[1978,1990,2000,2010,2013]) >= 0) {
+						$("#yearSlider .hLine").append("<div class=\"yLabel\" style=\"left:" + percent + "%\"><div>" + year + "</div></div>");
+					}
+					
+					$("#yearSlider .hLine").append("<div class=\"vLine\" style=\"" + style + "\">");
+				}
+			}
+			drawSliderLines();
+			
 		
 			initialized = true;
 		}
@@ -247,26 +303,24 @@ var k12map = (function() {
 				}
 			},
 			
-			
-			
 			popupTemplate: function(state) {
 				
-				function formatter(data) {
-					data = Math.round(data*1000)/10;
-					if (data > 0) data = "+" + data;
-					data = data + "%";
-					return data;
-				}
+				var formatter, year;
 				
-				if (typeof(m.data.theData[state]) == "undefined") return "No data";
+				if (typeof(m.data.theData[m.activeDataset].data[state]) == "undefined") return "No data";
 				var htmlString = "";
+				
 				htmlString += "<h4>" + m.data.stateNames[state] + "</h4>";
 				htmlString += "<ul>";
-				for (var dataSet = 0;dataSet<m.data.meta.codes.length;dataSet++) {
-					htmlString += "<li>" + m.data.meta.shortNames[dataSet];
-					htmlString += ": ";
-					htmlString += formatter(m.data.theData[state][dataSet]);
-					htmlString += "</li>";	
+				for (var dataSet in m.data.meta) {
+					year = m.activeYear - m.data.theData[dataSet].startYear;
+					formatter = m.data.meta[dataSet].formatter;
+					if (typeof(m.data.theData[dataSet].data[state][year]) != "undefined") {
+						htmlString += "<li>" + m.data.meta[dataSet].shortName;
+						htmlString += ": ";
+						htmlString += formatter(m.data.theData[dataSet].data[state][year]);
+						htmlString += "</li>";	
+					}
 				}
 				htmlString += "</ul>";
 				return htmlString;
@@ -289,6 +343,13 @@ var k12map = (function() {
 					x = Math.floor(box.x + box.width/2.0); 
 					y = Math.floor(box.y + box.height/2.0);
 					return [x,y];
+				}
+			},
+			resetYearSelect : function(dIndex) {
+				$("select#yearSelect").html("");
+				for (var i = 0;i<m.data.theData[dIndex].data["CA"].length;i++) {
+					var year = i + m.data.theData[dIndex].startYear;
+					$("select#yearSelect").append("<option value=\"" + year + "\">" + year + "</option>");
 				}
 			}
 		}

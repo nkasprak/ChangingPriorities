@@ -14,14 +14,36 @@ input, select {
 }
 
 h1,h2,h3,h4,h5,h6 {
-	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
 	line-height:100%;	
 }
 
 h1 {font-size:21pt}
 h2 {font-size:16pt}
+h3 {font-size:14pt}
+h3.title, p.download {
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
+	text-align:center;
+}
 
-h1.title {
+h3.title {
+	padding-bottom:0px;
+	margin-bottom:0px;	
+}
+
+p.download {
+	margin-top:0px;
+	padding-top:0px;	
+}
+
+p.titleBlurb {
+	font-size:13pt;
+	margin-top:0pt;
+	padding-top:0pt;
+	letter-spacing: -0.4px;	
+	font-weight:400;
+}
+
+h1 {
 	margin-top:0px;
 	padding-top:0px;
 	margin-bottom:5px;
@@ -46,6 +68,65 @@ select#stateLocal {
 	margin-left:auto;
 	margin-right:auto;
 	width: 525px;	
+}
+
+#yearSlider {
+	height:40px;
+	border:0px;
+	background:#fff;
+	width:90%;
+	left:5%;
+}
+
+#yearSlider .hLine {
+	position:absolute;
+	background-color:#aaa;
+	height:1px;
+	width:100%;
+	top:10px;
+	left:-5px;	
+}
+
+#yearSlider .yLabel {
+	position:absolute;	
+	font-family:"myriad-pro-condensed";
+	font-size:16px;
+	color:#aaa;
+	top:5px;
+}
+
+#yearSlider .yLabel div {
+	position:relative;
+	left:-12px;
+}
+
+#yearSlider .vLine {
+	position:absolute;
+	background-color:#aaa;
+	width:1px;
+	height:6px;
+	top:-3px;
+}
+
+#yearSlider .ui-slider-handle {
+	background:#000;
+	border:0px;
+	height:10px;
+	width:10px;	
+	border-radius:0px;
+	top:5px;
+	outline:none;
+}
+
+#yearSlider .ui-slider-handle span {
+	position:relative;
+	color:#000;
+	font-family:"myriad-pro-condensed";
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	left:-8px;
+	top:-20px;
 }
 
 #map {
@@ -77,4 +158,12 @@ select#stateLocal {
 
 #map text {
 	cursor:pointer;	
+}
+
+#legend {
+	width:50%;
+	position:absolute;
+	height:40px;
+	left:25%;
+	top:-5%;
 }

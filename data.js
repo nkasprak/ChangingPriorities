@@ -5,6 +5,7 @@
 		theData : {
 			"Inc_Total": {
 				startYear:1978,
+				hideFromMap: true,
 				data: {
 					"AL":[5529,5464,6368,7199,8581,9641,10246,10749,11504,12602,12357,13575,15365,16400,16938,18169,19074,20130,21108,21680,22214,24109,26034,26138,27532,27272,25257,27003,27526,28605,29694,30723,30739,31271,31437,31354],
 					"AK":[490,532,571,713,872,1072,1293,1530,1666,1767,1862,1908,1851,1840,1944,2703,1934,2042,2335,2571,2541,2325,2128,2196,2577,2629,2632,2781,3116,3072,2966,2508,2775,2894,2974,2682],
@@ -116,6 +117,7 @@
 				}
 			},
 			"Spend_Total": {
+				hideFromMap: true,
 				startYear:1986,
 				data: {
 					"AL":[270.01,266.23,255.63,208.08,276.95,234.95,217.61,282.44,310.12,303.02,324.94,331.94,233.15,350.1,349.85,351.47,358.34,392.56,435.13,404.31,431.33,513.39,465.54,517.33,403.49,412.29,477.82,460],
@@ -283,34 +285,67 @@
 			"WY":"Wyoming"
 		},
 		meta : {
-			shortNames: {
-				"Inc_Total":"Total Incarceration",
-				"Inc_Rate":"Incarceration Rate",
-				"Spend_Total":"Total Spending",
-				"Spend_Share":"Share of Spending"
+			"Inc_Total":{
+				shortName:"Total Incarceration",
+				formatter: function(data) {
+					return Math.round(data);	
+				}
+			},
+			"Inc_Rate":{
+				shortName:"Incarceration Rate",
+				formatter: function(data) {
+					data = Math.round(data)/1000;
+					data = data + "%";
+					return data;
+				}
+			},
+			"Spend_Total":{
+				shortName:"Total Spending",
+				formatter: function(data) {
+					console.log(data);
+					return "$" + Math.round(data);	
+				}
+			},
+			"Spend_Share":{
+				shortName:"Share of Spending",
+				formatter: function(data) {
+					data = Math.round(data)/1000;
+					data = data + "%";
+					return data;
+				}
 			}
 		},
 		getMaxMin: function() {
-			m.data.meta.dataMax = [];
-			m.data.meta.dataMin = [];
-			var tempArr = [];
-			var allArr = [];
-			var data = m.data.theData;
-			for (var state in data) {
-				for (var i=0;i<data[state].length;i++) {
-					if (typeof(tempArr[i]) == "undefined") tempArr[i] = [];
-					tempArr[i].push(data[state][i]);
-					if (m.dataScale=="global") allArr.push(data[state][i]);
+			function getMaxMinOfDataset(dIndex) {
+				var data, tempArr, allArr, dIndex, state, i, globalMax, globalMin;
+				m.data.meta[dIndex].dataMax = [];
+				m.data.meta[dIndex].dataMin = [];	
+				tempArr = [];
+				allArr = [];
+				data = m.data.theData[dIndex].data;
+				for (state in data) {
+					if (state != "Total") {
+						for (i=0;i<data[state].length;i++) {
+							if (typeof(tempArr[i]) == "undefined") tempArr[i] = [];
+							tempArr[i].push(data[state][i]);
+							if (m.dataScale=="global") allArr.push(data[state][i]);
+						}
+					}
+				}
+				globalMax = m.data.meta[dIndex].dataMax[i] = Math.max.apply(Math,allArr);
+				globalMin = m.data.meta[dIndex].dataMin[i] = Math.min.apply(Math,allArr);
+				for (i=0;i<tempArr.length;i++) {
+					if (m.dataScale=="global") {
+						m.data.meta[dIndex].dataMax[i] = globalMax;
+						m.data.meta[dIndex].dataMin[i] = globalMin;
+					} else {
+						m.data.meta[dIndex].dataMax[i] = Math.max.apply(Math,tempArr[i]);
+						m.data.meta[dIndex].dataMin[i] = Math.min.apply(Math,tempArr[i]);
+					} 
 				}
 			}
-			for (i=0;i<tempArr.length;i++) {
-				if (m.dataScale=="global") {
-					m.data.meta.dataMax[i] = Math.max.apply(Math,allArr);
-					m.data.meta.dataMin[i] = Math.min.apply(Math,allArr);
-				} else {
-					m.data.meta.dataMax[i] = Math.max.apply(Math,tempArr[i]);
-					m.data.meta.dataMin[i] = Math.min.apply(Math,tempArr[i]);
-				} 
+			for (dIndex in m.data.theData) {
+				getMaxMinOfDataset(dIndex);
 			}
 		}
 	};

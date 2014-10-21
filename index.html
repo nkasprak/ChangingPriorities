@@ -3,23 +3,42 @@
 <head>
 <meta charset="utf-8">
 <title>K12 Map</title>
+<link rel="stylesheet" type="text/css" href="jquery-ui-1.11.2.custom/jquery-ui.min.css" />
 <link rel="stylesheet" type="text/css" href="k12map.css" />
-<script src="//use.typekit.net/peo1mmt.js"></script>
+<script src="//use.typekit.net/hre4yus.js"></script>
 <script type ="text/javascript" src="fontloader.js"></script>
 </head>
 
 <body>
 <div id="wrapper">
-    <h1 class="title">In 35 States, Total State and Local Funding for K-12 Schools 
-Per Student Declined From 2008 to 2012</h1>
-    <h2>Percent change in <select id="stateLocal"><option value="state">state-only</option><option value="stateAndLocal">state-local</option></select> spending per student, inflation-adjusted, FY08-FY12</h2>
-    
-    <div id="map"></div>
-
+    <h1>Changing Priorities</h1>
+    <p class="titleBlurb">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id dictum
+nisi, at pulvinar sapien. Sed placerat odio ipsum, risus fermentum
+condimentum. Donec ac tempor elit. Fusce lobortis lacus at malesuada.</p>
+	<h3 class="title">Incarceration Rates by Year</h3>
+    <p class="download">(download data)</p>
+   <!--<p>Dataset: <select id="dataSet">
+ 
+   
+   </select></p>-->
+   
+   <div id="yearSlider">
+   <div class="hLine"></div>
+   
+   </div>
+   
+   <!--<p>Year: <select id="yearSelect"></select></p>-->
+   
+	<p>&nbsp;</p>
+    <div id="map">
+    <div id="legend"></div>
+    </div>
+	
 </div>
 
 <script type="text/javascript" src="raphael.min.js"></script>
 <script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
 <script type="text/javascript" src="us_paths.js"></script>
 <script type="text/javascript" src="k12map.js"></script>
 <script type="text/javascript" src="data.js"></script>

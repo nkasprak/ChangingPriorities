@@ -3,9 +3,9 @@
 (function(m) {
 
 	m.colorConfig = {
-		highColor : "#0081a4",
+		highColor : "#b9292f",
 		zeroColor : "#ffffff",
-		lowColor  : "#b9292f",
+		lowColor  : "#fff0d3",
 		hoverColor:	"#f8c55b"
 	};
 	
@@ -26,8 +26,8 @@
 	
 	m.stateColors = {};
 	
-	m.calcStateColors = function(dataIndex) {
-		var scale, state, dataPoint, dMax, dMin, calcColor, highRGB, lowRGB, zeroRGB, spansZero;
+	m.calcStateColors = function(dataID,dataYear) {
+		var scale, state, dataPoint, dMax, dMin, calcColor, highRGB, lowRGB, zeroRGB, spansZero, dataIndex;
 		
 		highRGB = m.hexToRGB(m.colorConfig.highColor);
 		zeroRGB = m.hexToRGB(m.colorConfig.zeroColor);
@@ -51,8 +51,10 @@
 			return m.RGBToHex(rgb);
 		};
 		
-		dMax = m.data.meta.dataMax[dataIndex];
-		dMin = m.data.meta.dataMin[dataIndex];
+		dataIndex = dataYear - m.data.theData[dataID].startYear;
+		
+		dMax = m.data.meta[dataID].dataMax[dataIndex];
+		dMin = m.data.meta[dataID].dataMin[dataIndex];
 		
 		spansZero = (dMax > 0 && dMin < 0);
 		
@@ -69,8 +71,8 @@
 		
 	
 		
-		for (state in m.data.theData) {
-			dataPoint = m.data.theData[state][dataIndex];
+		for (state in m.data.theData[dataID].data) {
+			dataPoint = m.data.theData[dataID].data[state][dataIndex];
 			
 			if (spansZero) {
 				//Data has positive and negative values - use a zero color
@@ -110,12 +112,7 @@
 	};
 	
 	m.applyStateColors = function(duration) {
-		function formatter(data) {
-			data = Math.round(data*1000)/10;
-			if (data > 0) data = "+" + data;
-			data = data + "%";
-			return data;
-		}
+		var formatter = m.data.meta[m.activeDataset].formatter;
 		if (typeof(duration)=="undefined") duration = 0;
 		if (duration > 0) toAnimate = {};
 		function brightness(hexcolor) {
@@ -128,8 +125,9 @@
 		} else {
 			m.legendMiddleText.attr({"text":"0%","x":Math.round((m.middleTextPos/100)*(m.width*.8)+m.width*.1)});	
 		}
-		m.legendLeftText.attr({"text":formatter(m.data.meta.dataMin[m.activeDataset])});
-		m.legendRightText.attr({"text":formatter(m.data.meta.dataMax[m.activeDataset])});
+		var year = m.activeYear - m.data.theData[m.activeDataset].startYear;
+		m.legendLeftText.attr({"text":formatter(m.data.meta[m.activeDataset].dataMin[year])});
+		m.legendRightText.attr({"text":formatter(m.data.meta[m.activeDataset].dataMax[year])});
 		for (state in m.stateColors) {
 			if (m.stateObjs[state]) {
 				if (duration == 0) m.stateObjs[state].attr("fill",m.stateColors[state]);
