@@ -287,8 +287,8 @@
 		meta : {
 			"Inc_Total":{
 				shortName:"Total Incarceration",
-				formatter: function(data) {
-					return Math.round(data);	
+				formatter: function(val) {
+					return m.utilities.commaSeparateNumber(Math.round(val));
 				}
 			},
 			"Inc_Rate":{
@@ -301,51 +301,54 @@
 			},
 			"Spend_Total":{
 				shortName:"Total Spending",
-				formatter: function(data) {
-					console.log(data);
-					return "$" + Math.round(data);	
+				formatter: function(val) {
+					if (val < 1000) {
+						return "$" + Math.round(val) + " million"	
+					} else {
+						return "$" + Math.round(val/10)/100 + " billion"
+					}	
 				}
 			},
 			"Spend_Share":{
 				shortName:"Share of Spending",
 				formatter: function(data) {
-					data = Math.round(data)/1000;
-					data = data + "%";
+					//data = Math.round(data)/1000;
+					data = Math.round(data*10000)/100 + "%";
 					return data;
 				}
 			}
 		},
-		getMaxMin: function() {
-			function getMaxMinOfDataset(dIndex) {
-				var data, tempArr, allArr, dIndex, state, i, globalMax, globalMin;
-				m.data.meta[dIndex].dataMax = [];
-				m.data.meta[dIndex].dataMin = [];	
-				tempArr = [];
-				allArr = [];
-				data = m.data.theData[dIndex].data;
-				for (state in data) {
-					if (state != "Total") {
-						for (i=0;i<data[state].length;i++) {
-							if (typeof(tempArr[i]) == "undefined") tempArr[i] = [];
-							tempArr[i].push(data[state][i]);
-							if (m.dataScale=="global") allArr.push(data[state][i]);
-						}
+		getMaxMinOfDataset: function(dIndex) {
+			var data, tempArr, allArr, dIndex, state, i, globalMax, globalMin;
+			m.data.meta[dIndex].dataMax = [];
+			m.data.meta[dIndex].dataMin = [];	
+			tempArr = [];
+			allArr = [];
+			data = m.data.theData[dIndex].data;
+			for (state in data) {
+				if (state != "Total") {
+					for (i=0;i<data[state].length;i++) {
+						if (typeof(tempArr[i]) == "undefined") tempArr[i] = [];
+						tempArr[i].push(data[state][i]);
+						if (m.dataScale=="global") allArr.push(data[state][i]);
 					}
 				}
-				globalMax = m.data.meta[dIndex].dataMax[i] = Math.max.apply(Math,allArr);
-				globalMin = m.data.meta[dIndex].dataMin[i] = Math.min.apply(Math,allArr);
-				for (i=0;i<tempArr.length;i++) {
-					if (m.dataScale=="global") {
-						m.data.meta[dIndex].dataMax[i] = globalMax;
-						m.data.meta[dIndex].dataMin[i] = globalMin;
-					} else {
-						m.data.meta[dIndex].dataMax[i] = Math.max.apply(Math,tempArr[i]);
-						m.data.meta[dIndex].dataMin[i] = Math.min.apply(Math,tempArr[i]);
-					} 
-				}
 			}
+			globalMax = m.data.meta[dIndex].dataMax[i] = Math.max.apply(Math,allArr);
+			globalMin = m.data.meta[dIndex].dataMin[i] = Math.min.apply(Math,allArr);
+			for (i=0;i<tempArr.length;i++) {
+				if (m.dataScale=="global") {
+					m.data.meta[dIndex].dataMax[i] = globalMax;
+					m.data.meta[dIndex].dataMin[i] = globalMin;
+				} else {
+					m.data.meta[dIndex].dataMax[i] = Math.max.apply(Math,tempArr[i]);
+					m.data.meta[dIndex].dataMin[i] = Math.min.apply(Math,tempArr[i]);
+				} 
+			}
+		},
+		getMaxMin: function() {
 			for (dIndex in m.data.theData) {
-				getMaxMinOfDataset(dIndex);
+				m.data.getMaxMinOfDataset(dIndex);
 			}
 		}
 	};

@@ -232,6 +232,22 @@ var prisonMap = (function() {
 			$("#factStatePicker").change(function() {
 				var state = $(this).val();
 				m.makeCharts(state);
+				var peakInc = Math.max.apply(Math,m.data.theData["Inc_Total"].data[state]);
+				var peakSpend = Math.max.apply(Math,m.data.theData["Spend_Total"].data[state]);
+				var peakIncIndex = $.inArray(peakInc,m.data.theData["Inc_Total"].data[state]);
+				var peakIncYear = peakIncIndex + m.data.theData["Inc_Total"].startYear;
+				var peakSpendIndex = $.inArray(peakSpend,m.data.theData["Spend_Total"].data[state]);
+				var peakSpendYear = peakSpendIndex + m.data.theData["Spend_Total"].startYear;
+				
+				$("#peakIncYear").html(Math.round(peakIncYear));
+				$("#peakInc").html(m.utilities.commaSeparateNumber(peakInc));
+				$("#peakIncRate").html(m.data.meta["Inc_Rate"].formatter(m.data.theData["Inc_Rate"].data[state][peakIncIndex]));
+				$("#peakSpendYear").html(peakSpendYear);
+				$("#peakSpend").html(m.data.meta["Spend_Total"].formatter(peakSpend));
+				
+				
+				/*<p>Peak incarceration: <span id="peakIncYear">1992</span> - <span id="peakInc">X.XX million</span> (<span id="peakIncRate">XX%</span>)</p>
+            <p>Peak spending: <span id="peakSpendYear">2001</span> - <span id="peakSpend">$X.XX million</span></p>*/
 			});
 			
 			initialized = true;
@@ -344,29 +360,17 @@ var prisonMap = (function() {
 				
 				$("<div id='flotTooltip'></div>").appendTo("body");
 				
-				var leftTooltipFormatter = function(val) {
-					return m.utilities.commaSeparateNumber(Math.round(val));
-				};
-				
-				var rightTooltipFormatter = function(val) {
-					if (val < 1000) {
-						return "$" + Math.round(val) + " million"	
-					} else {
-						return "$" + Math.round(val/1000) + " billion"
-					}
-				};
-				
 				$("#charts .chartCon").bind("plothover",function(event,pos,item) {
 					if (item) {
 						var chartID = ($(this).parents('.chartArea').first().attr("id"));
 						var format, css;
 						css = {top: item.pageY + 5};
 						if (chartID == "incarcerationGraphArea") {
-							format = leftTooltipFormatter;
+							format = format = m.data.meta["Inc_Total"].formatter;
 							css.left = item.pageX + 5;
 							css.right = "initial";
 						} else {
-							format = rightTooltipFormatter;
+							format = m.data.meta["Spend_Total"].formatter;
 							css.right = $("body").width() - (item.pageX - 5);
 							css.left = "initial";
 						}
