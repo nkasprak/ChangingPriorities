@@ -330,9 +330,6 @@ var prisonMap = (function() {
 					return m.utilities.commaSeparateNumber(Math.round(val));
 				}));
 				
-				console.log(leftChartOptions);
-				console.log(initialLeftData);
-				
 				var rightChartOptions = new chartOptions((function(val) {
 					if (val==0) return "$0";
 					if (val>=1000) {
@@ -343,8 +340,45 @@ var prisonMap = (function() {
 				}));
 				
 				m.leftPlot = $.plot("#incarcerationGraphArea .chartCon",initialLeftData,leftChartOptions);
-				
 				m.rightPlot = $.plot("#spendingGraphArea .chartCon",initialRightData,rightChartOptions);
+				
+				$("<div id='flotTooltip'></div>").appendTo("body");
+				
+				var leftTooltipFormatter = function(val) {
+					return m.utilities.commaSeparateNumber(Math.round(val));
+				};
+				
+				var rightTooltipFormatter = function(val) {
+					if (val < 1000) {
+						return "$" + Math.round(val) + " million"	
+					} else {
+						return "$" + Math.round(val/1000) + " billion"
+					}
+				};
+				
+				$("#charts .chartCon").bind("plothover",function(event,pos,item) {
+					if (item) {
+						var chartID = ($(this).parents('.chartArea').first().attr("id"));
+						var format, css;
+						css = {top: item.pageY + 5};
+						if (chartID == "incarcerationGraphArea") {
+							format = leftTooltipFormatter;
+							css.left = item.pageX + 5;
+							css.right = "initial";
+						} else {
+							format = rightTooltipFormatter;
+							css.right = $("body").width() - (item.pageX - 5);
+							css.left = "initial";
+						}
+						var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
+						$("#flotTooltip").html("<strong>" + Math.round(x) + "</strong><br />" + format(y))
+						.css(css)
+						.show();	
+					} else {
+						$("#flotTooltip").hide();
+					}
+				});
+				
 			},
 			
 			pageLoadFunction : function() {

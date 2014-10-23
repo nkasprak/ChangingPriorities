@@ -194,6 +194,19 @@ select#stateLocal {
 	float:right;
 }
 
+#flotTooltip {
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;	
+	position: absolute;
+	display: none;
+	padding: 2px;
+	color:#0081a4;
+	font-size:18px;
+	line-height:20px;
+	background-color:#fff;
+	opacity:0.8;
+	 -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+}
+
 #facts {
 	margin-top:30px;
 	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
