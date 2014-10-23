@@ -240,7 +240,7 @@
 			"CO":"Colorado",
 			"CT":"Connecticut",
 			"DE":"Delaware",
-			"DC":"Distr. of Col.",
+			/*"DC":"Distr. of Col.",*/
 			"FL":"Florida",
 			"GA":"Georgia",
 			"HI":"Hawaii",

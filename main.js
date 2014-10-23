@@ -244,11 +244,20 @@ var prisonMap = (function() {
 				$("#peakIncRate").html(m.data.meta["Inc_Rate"].formatter(m.data.theData["Inc_Rate"].data[state][peakIncIndex]));
 				$("#peakSpendYear").html(peakSpendYear);
 				$("#peakSpend").html(m.data.meta["Spend_Total"].formatter(peakSpend));
-				
-				
-				/*<p>Peak incarceration: <span id="peakIncYear">1992</span> - <span id="peakInc">X.XX million</span> (<span id="peakIncRate">XX%</span>)</p>
-            <p>Peak spending: <span id="peakSpendYear">2001</span> - <span id="peakSpend">$X.XX million</span></p>*/
+			
 			});
+			
+			$("span.embedDomain").html(document.URL);
+			$(".embedLink").click(function() {
+				if ($("div.embedCode").is(":visible")) {
+					$("div.embedCode").fadeOut(200);
+				} else {
+					$("div.embedCode").fadeIn(200);	
+				}
+			});
+			
+			$("#factStatePicker").trigger("change");
+			$("#wrapper").css("visibility","visible");
 			
 			initialized = true;
 		}

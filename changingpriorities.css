@@ -68,6 +68,7 @@ select#stateLocal {
 	margin-left:auto;
 	margin-right:auto;
 	width: 525px;	
+	visibility:hidden;
 }
 
 #yearSlider {
@@ -116,6 +117,7 @@ select#stateLocal {
 	border-radius:0px;
 	top:5px;
 	outline:none;
+	cursor:e-resize;
 }
 
 #yearSlider .ui-slider-handle span {
@@ -230,10 +232,10 @@ select#stateLocal {
 }
 
 #facts .rightColumn {
-	width:47%;
+	width:48.6%;
 	float:right;
 	border-left:1px dotted #aaa;
-	padding-left:1%;	
+	padding-left:1.5%;	
 	height:100%;
 }
 
@@ -247,4 +249,58 @@ select#stateLocal {
 
 #factStatePicker {
 	font-size:16px;	
+}
+
+div.credits {
+	font-family:"myriad-pro";
+	position:relative;	
+}
+
+div.credits p {
+	font-size:12px;
+	padding:0em;
+	margin:0em;
+}
+
+#cbppCredit {
+	border-top:1px solid #aaa;
+	font-size:12px;	
+	margin-top:5px;
+	padding-top:3px;
+	text-align:right;
+	color:#0081a4;
+	margin-right:3px;
+}
+
+.embedLink {
+	color:#0081a4;
+	clear:both;
+	cursor:pointer;
+}
+
+.embedLink:hover {
+	text-decoration:underline;
+}
+
+div.embedCode {
+	display:none;	
+	position:absolute;
+	height:4em;
+	bottom:50px;
+	border:1px solid #000;
+	z-index:100;
+	left:0px;
+	width:92%;
+	max-width:525px;
+	background-color:#fff;
+	padding:5px;
+}
+
+div.embedCodeArea {
+	font-family:"Courier New", Courier, monospace;
+	position:relative;
+	top:10px;
+	background-color:#fff;
+	font-size:12px;
+	
 }

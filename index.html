@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>K12 Map</title>
+<title>Changing Priorities</title>
 <link rel="stylesheet" type="text/css" href="jquery-ui-1.11.2.custom/jquery-ui.min.css" />
 <link rel="stylesheet" type="text/css" href="changingpriorities.css" />
 <script src="//use.typekit.net/hre4yus.js"></script>
@@ -11,84 +11,78 @@
 
 <body>
 <div id="wrapper">
-    <h1>Changing Priorities</h1>
-    <p class="titleBlurb">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id dictum
-nisi, at pulvinar sapien. Sed placerat odio ipsum, risus fermentum
-condimentum. Donec ac tempor elit. Fusce lobortis lacus at malesuada.</p>
-	<h3 class="title">Incarceration Rates by Year</h3>
-    <p class="download">(download data)</p>
-   <!--<p>Dataset: <select id="dataSet">
- 
-   
-   </select></p>-->
-   
-   <div id="yearSlider">
-   <div class="hLine"></div>
-   
-   </div>
-   
-   <!--<p>Year: <select id="yearSelect"></select></p>-->
-   
-	<p>&nbsp;</p>
-    <div id="map">
+  <h1>Changing Priorities</h1>
+  <p class="titleBlurb">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id dictum
+    nisi, at pulvinar sapien. Sed placerat odio ipsum, risus fermentum
+    condimentum. Donec ac tempor elit. Fusce lobortis lacus at malesuada.</p>
+  <h3 class="title">Incarceration Rates by Year</h3>
+  <p class="download">(download data)</p>
+  <div id="yearSlider">
+    <div class="hLine"></div>
+  </div>
+  <p>&nbsp;</p>
+  <div id="map">
     <div id="legend"></div>
+  </div>
+  <div id="charts">
+    <div id="incarcerationGraphArea" class="chartArea">
+      <h3 class="title"><span class="state">U.S.</span> total incarcerations</h3>
+      <div class="chartCon"></div>
     </div>
-    <div id="charts">
-        <div id="incarcerationGraphArea" class="chartArea">
-            <h3 class="title"><span class="state">U.S.</span> total incarcerations</h3>
-            <div class="chartCon"></div>
-        </div>
-        <div id="spendingGraphArea" class="chartArea">
-            <h3 class="title"><span class="state">U.S.</span> total spending</h3>
-            <div class="chartCon"></div>
-        </div>
-	</div>
-    <div id="facts">
-    	<h3 class="title">Key state stats: <select id="factStatePicker"></select></h3>
-        <div class = "leftColumn">
-        	<p><strong>Recent reforms</strong></p>
-            <p><strong>2012</strong>: Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Aliquam id dictum nisi, at
-                pulvinar sapien.
-            </p>
-            <p><strong>2013</strong>: Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Aliquam id dictum nisi, at
-                pulvinar sapien.
-            </p>
-        </div>
-        <div class= "rightColumn">
-        	<p><strong>By the numbers</strong></p>
-            <p>Peak incarceration: <span id="peakIncYear">1992</span> - <span id="peakInc">X.XX million</span> (<span id="peakIncRate">XX%</span>)</p>
-            <p>Peak spending: <span id="peakSpendYear">2001</span> - <span id="peakSpend">$X.XX million</span></p>
-            <p>Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit. Aliquam id dictum nisi, at
-            pulvinar sapien.</p>
-        
-        
-        </div>
-        <div class="clear"></div>
+    <div id="spendingGraphArea" class="chartArea">
+      <h3 class="title"><span class="state">U.S.</span> total spending</h3>
+      <div class="chartCon"></div>
     </div>
-    
-    <div id="notes">
+  </div>
+  <div id="facts">
+    <h3 class="title">Key state stats &nbsp;
+      <select id="factStatePicker">
+      </select>
+    </h3>
+    <div class = "leftColumn">
+      <p><strong>Recent reforms</strong></p>
+      <p><strong>2012</strong>: Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Aliquam id dictum nisi, at
+        pulvinar sapien. </p>
+      <p><strong>2013</strong>: Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Aliquam id dictum nisi, at
+        pulvinar sapien. </p>
+    </div>
+    <div class= "rightColumn">
+      <p><strong>By the numbers</strong></p>
+      <p>Peak incarceration: <span id="peakIncYear">1992</span> - <span id="peakInc">X.XX million</span> (<span id="peakIncRate">XX%</span>)</p>
+      <p>Peak spending: <span id="peakSpendYear">2001</span> - <span id="peakSpend">$X.XX million</span></p>
+      <p>Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Aliquam id dictum nisi, at
+        pulvinar sapien.</p>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div id="notes">
     <p>Note: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id dictum nisi, at pulvinar sapien. Sed placerat odio
-ipsum, sit amet lobortis risus fermentum condimentum. Donec ac tempor elit. Fusce lobortis lacus at fringilla malesuada. Nulla
-facilisi. Donec metus libero, consectetur a ultricies at, ullamcorper in tellus</p><p>
-Source: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id dictum nisi, at pulvinar sapien. Sed placerat odio
-ipsum, sit amet lobortis risus fermentum condimentum. Donec ac tempor elit. Fusce lobortis lacus at fringilla malesuada. Nulla
-facilisi. Donec metus libero, consectetur a ultricies at, ullamcorper in tellus</p>
+      ipsum, sit amet lobortis risus fermentum condimentum. Donec ac tempor elit. Fusce lobortis lacus at fringilla malesuada. Nulla
+      facilisi. Donec metus libero, consectetur a ultricies at, ullamcorper in tellus</p>
+    <p> Source: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id dictum nisi, at pulvinar sapien. Sed placerat odio
+      ipsum, sit amet lobortis risus fermentum condimentum. Donec ac tempor elit. Fusce lobortis lacus at fringilla malesuada. Nulla
+      facilisi. Donec metus libero, consectetur a ultricies at, ullamcorper in tellus</p>
+  </div>
+  <div class="credits">
+    <div class="embedCode">
+      <p><strong>Embed code:</strong> <span class="embedLink">(Close)</span></p>
+      <div class="embedCodeArea">&lt;iframe src=&quot;<span class="embedDomain"></span>&quot; frameborder=&quot;0&quot; width=&quot;525&quot; height=&quot;1260&quot; scrolling=&quot;no&quot; &gt;&lt;/iframe&gt;</div>
     </div>
-    
-    
+    <p class="embedLink">Embed this graphic on your own site </p>
+    <p>CBPP data visualization by <a href="http://www.cbpp.org/about/index.cfm?fa=view&id=234" target="_blank">Nick Kasprak</a>, <a href="http://www.cbpp.org/experts/?fa=view&id=232" target="_blank">Michael Mitchell</a>, and <a href="http://www.cbpp.org/about/index.cfm?fa=view&id=229" target="_blank">Rob Cady</a></p>
+    <div id="cbppCredit">Center on Budget and Policy Priorities | <a href="http://www.cbpp.org" target="_blank">cbpp.org</a></div>
+  </div>
 </div>
-
-<script type="text/javascript" src="raphael.min.js"></script>
-<script type="text/javascript" src="jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
-<script type="text/javascript" src="flot/jquery.flot.min.js"></script>
-<script type="text/javascript" src="us_paths.js"></script>
-<script type="text/javascript" src="main.js"></script>
-<script type="text/javascript" src="data.js"></script>
+<script type="text/javascript" src="raphael.min.js"></script> 
+<script type="text/javascript" src="jquery-1.10.2.min.js"></script> 
+<script type="text/javascript" src="jquery-ui-1.11.2.custom/jquery-ui.min.js"></script> 
+<script type="text/javascript" src="flot/jquery.flot.min.js"></script> 
+<script type="text/javascript" src="us_paths.js"></script> 
+<script type="text/javascript" src="main.js"></script> 
+<script type="text/javascript" src="data.js"></script> 
 <script type="text/javascript" src="colors.js"></script>
-
 </body>
 </html>
