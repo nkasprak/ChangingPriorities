@@ -352,4 +352,4 @@
 	
 	m.data.getMaxMin();
 
-})(k12map);
+})(prisonMap);

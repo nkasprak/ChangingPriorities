@@ -1,6 +1,6 @@
 // JavaScript Document
 
-var k12map = (function() {
+var prisonMap = (function() {
 	
 	var m = (function() {
 		
@@ -21,6 +21,10 @@ var k12map = (function() {
 					"stroke-width":0.5
 				});
 				
+				m.stateObjs[state].click(function(e) {
+					$("#factStatePicker").val(state);
+					$("#factStatePicker").trigger("change");
+				});
 				
 				m.stateObjs[state].hover(function(e) {
 					if (m.stateCodes) var state = m.stateCodes[this.id];
@@ -67,6 +71,12 @@ var k12map = (function() {
 				m.stateLabelObjs[state].attr({
 					"font-size":18,
 					"font-family":$("#" + m.mapDivID).css("font-family")
+				});
+				
+				m.stateLabelObjs[state].click(function(e) {
+					var state = $(this[0]).children("tspan").html();
+					$("#factStatePicker").val(state);
+					$("#factStatePicker").trigger("change");
 				});
 				
 				m.stateLabelObjs[state].hover(function(e) {
@@ -160,6 +170,14 @@ var k12map = (function() {
 				clearTimeout(m.fadeTimer);
 			});
 			
+			$("#map").on("click","div.popup",function() {
+				if (m.highlightedStates.length>0) {
+					var state = m.highlightedStates[0];
+					$("#factStatePicker").val(state);
+					$("#factStatePicker").trigger("change");
+				}
+			});
+			
 			$("#map").on("mousemove",function(e) {
 				var tag = $(e.target).prop("tagName");
 				if (tag == "svg") {
@@ -199,7 +217,23 @@ var k12map = (function() {
 			}
 			drawSliderLines();
 			
-		
+			m.makeCharts("Total");
+			
+			(function() {
+				var option;
+				$("#factStatePicker").append("<option value=\"Total\">U.S. Total</option>");
+				for (var state in m.data.stateNames) {
+					option = $("<option value=\"" + state + "\">" + m.data.stateNames[state] + "</option>");
+					$("#factStatePicker").append(option);
+				}
+				
+			})();
+			
+			$("#factStatePicker").change(function() {
+				var state = $(this).val();
+				m.makeCharts(state);
+			});
+			
 			initialized = true;
 		}
 		
@@ -210,7 +244,7 @@ var k12map = (function() {
 			resizeMap : function() {
 				var width;
 				width = $("#" + m.mapDivID).width();
-				m.height = width*0.8;
+				m.height = width*(5/8);
 				m.width = width;
 				if (!initialized) initialWidth = m.width;
 				$("#" + m.mapDivID).css("height",m.height);
@@ -240,10 +274,77 @@ var k12map = (function() {
 					if (m.stateObjs[state]) m.stateObjs[state].transform(m.transformString);
 					if (m.stateLabelObjs[state]) m.stateLabelObjs[state].transform(m.textTransformString);
 				}
-				m.legend.attr({"x":m.width*.1,"y":m.height*.9,width:m.width*.8,height:m.height*0.035});
-				m.legendLeftText.transform(m.textTransformString);
-				m.legendRightText.transform(m.textTransformString);
-				m.legendMiddleText.transform(m.textTransformString);
+			},
+			
+			makeCharts: function(selected_state) {
+				function makeFlotData(dIndex) {
+					var data = [];
+					var baseData = m.data.theData[dIndex].data[selected_state];
+					var startYear = m.data.theData[dIndex].startYear;
+					for (var i = 0;i<baseData.length;i++) {
+						if (!(baseData[i] == null || baseData[i] == 0)) data.push([i+startYear,baseData[i]]);	
+					}
+					return [{data: data, shadowSize:0, color:"#0081a4"}];
+				}
+				
+				$("#charts span.state").html(m.data.stateNames[selected_state]);
+				
+				var initialLeftData = makeFlotData("Inc_Total");
+				var initialRightData = makeFlotData("Spend_Total");
+				var yearTicks = function(year) {
+					var twoDigitYear = year%100;
+					twoDigitYear = twoDigitYear + "";
+					if (twoDigitYear.length<2) twoDigitYear = "0" + twoDigitYear;
+					return "'" + twoDigitYear;
+				}
+				
+				var chartOptions = function(tickFormatter) {
+					this.xaxis = {
+						show:true,
+						axisMargin:0,
+						labelWidth:80,
+						font: {
+							size:16,
+							color:"aaa"	
+						},
+						tickLength:5,
+						tickFormatter: yearTicks
+					};
+					this.yaxes = [
+						{	
+							show:true,
+							axisMargin:0,
+							labelHeight:30,
+							min:0,
+							font: {
+								size:16	,
+								color:"aaa"	
+							},
+							tickFormatter: tickFormatter
+						}
+					];
+					this.grid = {borderWidth:0,hoverable:true};
+				};
+				
+				var leftChartOptions = new chartOptions((function(val) {
+					return m.utilities.commaSeparateNumber(Math.round(val));
+				}));
+				
+				console.log(leftChartOptions);
+				console.log(initialLeftData);
+				
+				var rightChartOptions = new chartOptions((function(val) {
+					if (val==0) return "$0";
+					if (val>=1000) {
+						return "$" + Math.round(val/10)/100 + "B";
+					} else {
+						return "$" + Math.round(val) + "M";	
+					}
+				}));
+				
+				m.leftPlot = $.plot("#incarcerationGraphArea .chartCon",initialLeftData,leftChartOptions);
+				
+				m.rightPlot = $.plot("#spendingGraphArea .chartCon",initialRightData,rightChartOptions);
 			},
 			
 			pageLoadFunction : function() {
@@ -326,6 +427,10 @@ var k12map = (function() {
 				return htmlString;
 			},
 			
+			switchDisplay: function(state) {
+				
+			},
+			
 			stateObjs: {},
 			
 			stateLabelObjs: {},
@@ -343,6 +448,13 @@ var k12map = (function() {
 					x = Math.floor(box.x + box.width/2.0); 
 					y = Math.floor(box.y + box.height/2.0);
 					return [x,y];
+				},
+				//Thanks http://stackoverflow.com/questions/3883342/add-commas-to-a-number-in-jquery
+				commaSeparateNumber: function(val){
+					while (/(\d+)(\d{3})/.test(val.toString())){
+				  		val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+					}
+					return val;
 				}
 			},
 			resetYearSelect : function(dIndex) {
@@ -361,6 +473,6 @@ var k12map = (function() {
 $(document).ready(function() {
 	k12_floader.documentReady = true;
 	if (k12_floader.fontsLoaded && k12_floader.documentReady) {
-		k12map.pageLoadFunction();		
+		prisonMap.pageLoadFunction();		
 	}	
 });

@@ -63,7 +63,7 @@ select#stateLocal {
 
 #wrapper {
 	position:relative;
-	
+	overflow:hidden;
 	max-width:525px;
 	margin-left:auto;
 	margin-right:auto;
@@ -121,7 +121,7 @@ select#stateLocal {
 #yearSlider .ui-slider-handle span {
 	position:relative;
 	color:#000;
-	font-family:"myriad-pro-condensed";
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
 	font-size:16px;
 	font-weight:bold;
 	text-align:center;
@@ -165,5 +165,73 @@ select#stateLocal {
 	position:absolute;
 	height:40px;
 	left:25%;
-	top:-5%;
+	top:-10%;
+}
+
+#charts {
+	height:220px;	
+}
+
+#charts .chartArea {
+	width:48%;
+	height:100%;
+	position:relative;
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
+}
+
+#charts .chartArea .chartCon {
+	position:absolute;
+	bottom:0px;
+	height:85%;
+	width:113%;	
+}
+
+#incarcerationGraphArea {
+	float:left;
+}
+
+#spendingGraphArea {
+	float:right;
+}
+
+#facts {
+	margin-top:30px;
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
+	background-color:#eee;
+	border-top:1px solid #444;
+	border-bottom:1px solid #444;
+	padding:5px;
+}
+
+#facts p, #facts h3  {
+	margin-top:0.3em;
+	margin-bottom:0.3em;
+	padding-top:0.0em;
+	padding-bottom:0.0em;	
+}
+
+#facts .leftColumn {
+	width:47%;	
+	float:left;
+	height:100%;
+}
+
+#facts .rightColumn {
+	width:47%;
+	float:right;
+	border-left:1px dotted #aaa;
+	padding-left:1%;	
+	height:100%;
+}
+
+#facts .clear {
+	clear:both;	
+}
+
+#notes {
+	font-size:12px;	
+}
+
+#factStatePicker {
+	font-size:16px;	
 }
