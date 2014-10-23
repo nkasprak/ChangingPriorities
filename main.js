@@ -21,10 +21,13 @@ var prisonMap = (function() {
 					"stroke-width":0.5
 				});
 				
-				m.stateObjs[state].click(function(e) {
+				var stateClick = function(e) {
 					$("#factStatePicker").val(state);
-					$("#factStatePicker").trigger("change");
-				});
+					$("#factStatePicker").trigger("change");	
+				}
+				
+				m.stateObjs[state].click(stateClick);
+				m.stateObjs[state].touchstart(stateClick);
 				
 				m.stateObjs[state].hover(function(e) {
 					if (m.stateCodes) var state = m.stateCodes[this.id];
@@ -74,16 +77,16 @@ var prisonMap = (function() {
 				});
 				
 				m.stateLabelObjs[state].click(function(e) {
-					var state = $(this[0]).children("tspan").html();
+					var state = $(this[0]).children("tspan").text();
 					$("#factStatePicker").val(state);
 					$("#factStatePicker").trigger("change");
 				});
 				
 				m.stateLabelObjs[state].hover(function(e) {
-					var state = $(this[0]).children("tspan").html();
+					var state = $(this[0]).children("tspan").text();
 					stateEnter(state);
 				},function(e) {
-					var state = $(this[0]).children("tspan").html();
+					var state = $(this[0]).children("tspan").text();
 					stateLeave(state);
 				});
 				
@@ -178,7 +181,7 @@ var prisonMap = (function() {
 				}
 			});
 			
-			$("#map").on("mousemove",function(e) {
+			$("#map").on("mousemove touchstart",function(e) {
 				var tag = $(e.target).prop("tagName");
 				if (tag == "svg") {
 					clearTimeout(m.fadeTimer);
@@ -187,8 +190,13 @@ var prisonMap = (function() {
 				}
 				if (initialized) {
 					if ($(e.target).prop("tagName") == "path") {
-						m.mousePos.x = e.offsetX;
-						m.mousePos.y = e.offsetY;
+						if (e.originalEvent.touches) {
+							m.mousePos.x = e.originalEvent.touches[0].pageX - $("#map").offset().left;
+							m.mousePos.y = e.originalEvent.touches[0].pageY - $("#map").offset().top;
+						} else {
+							m.mousePos.x = e.pageX - $("#map").offset().left;
+							m.mousePos.y = e.pageY - $("#map").offset().top;
+						}
 					}
 				}
 				
