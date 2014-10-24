@@ -7,6 +7,7 @@ var prisonMap = (function() {
 		var hideDC = true;
 		var initialized = false;
 		var initialWidth;
+		var touchscreen = false;
 		var initialize = function() {
 			
 			function makeState(state) {
@@ -26,15 +27,27 @@ var prisonMap = (function() {
 					$("#factStatePicker").trigger("change");	
 				}
 				
-				m.stateObjs[state].click(stateClick);
-				m.stateObjs[state].touchstart(stateClick);
+				
+				m.stateObjs[state].touchstart(function(e) {
+					touchscreen = true;
+					stateClick(e);
+					m.popupState(state);
+				});
+				
+				m.stateObjs[state].click(function(e) {
+					if (!touchscreen) stateClick(e);
+				});
 				
 				m.stateObjs[state].hover(function(e) {
-					if (m.stateCodes) var state = m.stateCodes[this.id];
-					stateEnter(state);
+					if (!touchscreen) {
+						if (m.stateCodes) var state = m.stateCodes[this.id];
+						stateEnter(state);
+					}
 				},function(e) {
-					if (m.stateCodes) var state = m.stateCodes[this.id];
-					stateLeave(state);
+					if (!touchscreen) {
+						if (m.stateCodes) var state = m.stateCodes[this.id];
+						stateLeave(state);
+					}
 				});
 				
 				//store raphael IDs of each state
@@ -45,26 +58,30 @@ var prisonMap = (function() {
 			};
 			
 			function stateEnter(state) {
-				if (initialized) {
-					clearTimeout(m.fadeTimer);
-					if (state != m.currentStatePopup) {
-						m.currentStatePopup = state;
-						m.popupTimer = setTimeout(function() {
-							m.popupState(m.currentStatePopup);
-						},50);
+				if (!touchscreen) {
+					if (initialized) {
+						clearTimeout(m.fadeTimer);
+						if (state != m.currentStatePopup) {
+							m.currentStatePopup = state;
+							m.popupTimer = setTimeout(function() {
+								m.popupState(m.currentStatePopup);
+							},50);
+						}
 					}
 				}
 			};
 			
 			function stateLeave(state) {
-				if (initialized) {
-					clearTimeout(m.fadeTimer);
-					m.fadeTimer = setTimeout(m.fadeoutPopups,100);
-					
+				if (!touchscreen) {
+					if (initialized) {
+						clearTimeout(m.fadeTimer);
+						m.fadeTimer = setTimeout(m.fadeoutPopups,100);
+						
+					}
 				}
 			}
 			
-			function makeText(coords) {
+			function makeText(coords,state) {
 				if (text_configs.offset[state]) {
 					coords[0] += text_configs.offset[state][0];
 					coords[1] += text_configs.offset[state][1];
@@ -77,17 +94,30 @@ var prisonMap = (function() {
 				});
 				
 				m.stateLabelObjs[state].click(function(e) {
-					var state = $(this[0]).children("tspan").text();
+					if (!touchscreen) {
+						var state = $(this[0]).children("tspan").text();
+						$("#factStatePicker").val(state);
+						$("#factStatePicker").trigger("change");
+					}
+				});
+				
+				m.stateLabelObjs[state].touchstart(function(e) {
+					touchscreen = true;
 					$("#factStatePicker").val(state);
-					$("#factStatePicker").trigger("change");
+					$("#factStatePicker").trigger("change");	
+					m.popupState(state);
 				});
 				
 				m.stateLabelObjs[state].hover(function(e) {
-					var state = $(this[0]).children("tspan").text();
-					stateEnter(state);
+					if (!touchscreen) {
+						var state = $(this[0]).children("tspan").text();
+						stateEnter(state);
+					}
 				},function(e) {
-					var state = $(this[0]).children("tspan").text();
-					stateLeave(state);
+					if (!touchscreen) {
+						var state = $(this[0]).children("tspan").text();
+						stateLeave(state);
+					}
 				});
 				
 				//store raphael IDs of each label
@@ -110,17 +140,12 @@ var prisonMap = (function() {
 				if (!(hideDC == true && state == "DC")) { 
 					makeState(state);
 					if (text_configs.hide[state]) {} else {
-						makeText(m.utilities.pathCenter(m.stateObjs[state]));
+						makeText(m.utilities.pathCenter(m.stateObjs[state]),state);
 					}
 				}
 			}
 			
 			m.activeDataset = "Inc_Rate";
-			
-			
-			
-			
-			/*m.activeYear = 1978;*/
 			
 			var makeLegend = function() {
 				var height = $("#legend").height();
@@ -130,7 +155,7 @@ var prisonMap = (function() {
 				m.legend.attr({"stroke":"#aaa","stroke-width":0.8});
 				m.legendLeftText = m.legendPaper.text(0,height*.7,"").attr({'text-anchor':'start'});
 				m.legendRightText = m.legendPaper.text(width,height*.7,"").attr({'text-anchor':'end'});
-				m.legendMiddleText = m.legendPaper.text(width*.5,height*.5,"0%");
+				m.legendMiddleText = m.legendPaper.text(width*.5,height*.5,"");
 				
 				
 				var attrs = {
@@ -165,15 +190,19 @@ var prisonMap = (function() {
 			
 			m.applyStateColors();
 			
-			$("#map").on("mouseleave","div.popup",function() {
+			$("#map").on("mouseleave","div.popup",function(e) {
 				stateLeave("none");
 			});
 			
-			$("#map").on("mouseenter","div.popup",function() {
+			$("#map").on("mouseenter","div.popup",function(e) {
 				clearTimeout(m.fadeTimer);
 			});
 			
-			$("#map").on("click","div.popup",function() {
+			$("#map").on("click touchstart","div.popup",function(e) {
+				if (touchscreen) {
+					console.log("fade!");
+					m.fadeoutPopups();	
+				}
 				if (m.highlightedStates.length>0) {
 					var state = m.highlightedStates[0];
 					$("#factStatePicker").val(state);
@@ -181,21 +210,26 @@ var prisonMap = (function() {
 				}
 			});
 			
-			$("#map").on("mousemove touchstart",function(e) {
-				var tag = $(e.target).prop("tagName");
-				if (tag == "svg") {
-					clearTimeout(m.fadeTimer);
-					clearTimeout(m.popupTimer);
-					m.fadeoutPopups();
+			$("#map").on("mousemove",function(e) {
+				if (!touchscreen) {
+					var tag = $(e.target).prop("tagName");
+					if (tag == "svg") {
+						clearTimeout(m.fadeTimer);
+						clearTimeout(m.popupTimer);
+						m.fadeoutPopups();
+					}
 				}
-				if (initialized) {
-					if ($(e.target).prop("tagName") == "path") {
-						if (e.originalEvent.touches) {
-							m.mousePos.x = e.originalEvent.touches[0].pageX - $("#map").offset().left;
-							m.mousePos.y = e.originalEvent.touches[0].pageY - $("#map").offset().top;
-						} else {
-							m.mousePos.x = e.pageX - $("#map").offset().left;
-							m.mousePos.y = e.pageY - $("#map").offset().top;
+			});
+			
+			$("#map").on("mousemove",function(e) {
+				if (!touchscreen) {
+					var tag = $(e.target).prop("tagName");
+					if (initialized) {
+						if (tag == "path" || tag == "shape") {
+							
+								m.mousePos.x = e.pageX - $("#map").offset().left;
+								m.mousePos.y = e.pageY - $("#map").offset().top;
+							
 						}
 					}
 				}
@@ -239,6 +273,7 @@ var prisonMap = (function() {
 			
 			$("#factStatePicker").change(function() {
 				var state = $(this).val();
+				if (state == null || state == "") return false;
 				m.makeCharts(state);
 				var peakInc = Math.max.apply(Math,m.data.theData["Inc_Total"].data[state]);
 				var peakSpend = Math.max.apply(Math,m.data.theData["Spend_Total"].data[state]);
@@ -309,7 +344,10 @@ var prisonMap = (function() {
 				}
 			},
 			
+			flotTooltipTimer : 0,
+			
 			makeCharts: function(selected_state) {
+				if (selected_state == null || selected_state == "") return false;
 				function makeFlotData(dIndex) {
 					var data = [];
 					var baseData = m.data.theData[dIndex].data[selected_state];
@@ -377,27 +415,66 @@ var prisonMap = (function() {
 				
 				$("<div id='flotTooltip'></div>").appendTo("body");
 				
+				var tooltipDisplayFunction = function(item, chartID) {
+					console.log(item);
+					console.log(chartID);
+					var format, css;
+					css = {top: item.pageY + 5};
+					if (chartID == "incarcerationGraphArea") {
+						format = format = m.data.meta["Inc_Total"].formatter;
+						css.left = item.pageX + 5;
+						css.right = "initial";
+					} else {
+						format = m.data.meta["Spend_Total"].formatter;
+						css.right = $("body").width() - (item.pageX - 5);
+						css.left = "initial";
+					}
+					var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
+					$("#flotTooltip").html("<strong>" + Math.round(x) + "</strong><br />" + format(y))
+					.css(css)
+					.show();	
+				}
+				
 				$("#charts .chartCon").bind("plothover",function(event,pos,item) {
 					if (item) {
-						var chartID = ($(this).parents('.chartArea').first().attr("id"));
-						var format, css;
-						css = {top: item.pageY + 5};
-						if (chartID == "incarcerationGraphArea") {
-							format = format = m.data.meta["Inc_Total"].formatter;
-							css.left = item.pageX + 5;
-							css.right = "initial";
-						} else {
-							format = m.data.meta["Spend_Total"].formatter;
-							css.right = $("body").width() - (item.pageX - 5);
-							css.left = "initial";
-						}
-						var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
-						$("#flotTooltip").html("<strong>" + Math.round(x) + "</strong><br />" + format(y))
-						.css(css)
-						.show();	
+						tooltipDisplayFunction(item,($(this).parents('.chartArea').first().attr("id")));
 					} else {
 						$("#flotTooltip").hide();
 					}
+				});
+				
+				
+				var plotTouchFunc = function(e,div,plot) {
+					clearTimeout(m.flotTooltipTimer);
+					var offset = plot.offset();
+					var x = e.originalEvent.touches[0].pageX - offset.left;
+					var year = Math.round(plot.getAxes().xaxis.c2p(x));
+					var data = plot.getData()[0].data;
+					y = data[year-data[0][0]][1];
+					var fakeItem = {
+						pageX: e.originalEvent.touches[0].pageX,
+						pageY: e.originalEvent.touches[0].pageY,
+						datapoint: [year,y]
+					}
+					m.leftPlot.unhighlight();
+					m.rightPlot.unhighlight();
+					plot.highlight(0,year-data[0][0]);
+					tooltipDisplayFunction(fakeItem,$(div).parents(".chartArea").attr("id"));
+					m.flotTooltipTimer = setTimeout(function() {
+						$("#flotTooltip").hide();
+						m.leftPlot.unhighlight();
+						m.rightPlot.unhighlight();
+					},3000);
+				}
+				
+				$("#incarcerationGraphArea .chartCon").on("touchstart",function(e) {
+					touchscreen = true;
+					plotTouchFunc(e,this,m.leftPlot);
+				});
+				
+				$("#spendingGraphArea .chartCon").on("touchstart",function(e) {
+					touchscreen = true;
+					plotTouchFunc(e,this,m.rightPlot);
 				});
 				
 			},
@@ -434,6 +511,7 @@ var prisonMap = (function() {
 			popupState: function(state) {
 				if (state != "none") {
 					var coords = [m.mousePos.x,m.mousePos.y];
+					if (touchscreen) coords = m.utilities.pathCenter(m.stateObjs[state]);
 					var popup = $("<div class=\"popup\" style=\"display:none\">");
 					m.fadeoutPopups();
 					popup.html(m.popupTemplate(state));

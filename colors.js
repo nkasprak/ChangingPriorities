@@ -90,7 +90,7 @@
 	m.animateStateColor = function(newColors, duration) {
 		var startColors = {};
 		for (state in newColors) {
-			startColors[state] = m.hexToRGB(m.stateObjs[state].attr("fill"));
+			if (m.stateObjs[state]) startColors[state] = m.hexToRGB(m.stateObjs[state].attr("fill"));
 		};
 		var tracker = 0;
 		var r = setInterval(function() {
@@ -100,6 +100,7 @@
 			}
 			var scale = tracker/duration;
 			$.each(newColors, function(state,color) {
+				if (state == "") return false;
 				rgbColor = m.hexToRGB(color);
 				var frameColor = [0,0,0];
 				for (var i = 0;i<3;i++) {
