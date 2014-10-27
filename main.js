@@ -8,6 +8,14 @@ var prisonMap = (function() {
 		var initialized = false;
 		var initialWidth;
 		var touchscreen = false;
+		var initialTouch = false;
+		$("body").on("touchstart",function() {
+			if (!initialTouch) {
+				$(".yesTouchscreen").show();
+				$(".noTouchscreen").hide();	
+			}
+			initialTouch = true;
+		});
 		var initialize = function() {
 			
 			function makeState(state) {
@@ -82,20 +90,19 @@ var prisonMap = (function() {
 			}
 			
 			function makeText(coords,state) {
-				if (text_configs.offset[state]) {
-					coords[0] += text_configs.offset[state][0];
-					coords[1] += text_configs.offset[state][1];
-				}
+				var coords = m.getTextCoords(state);
+				
 			
 				m.stateLabelObjs[state] = m.paper.text(coords[0],coords[1],state);
 				m.stateLabelObjs[state].attr({
 					"font-size":18,
 					"font-family":$("#" + m.mapDivID).css("font-family")
+					//"font-family":"Arial Narrow"
 				});
 				
 				m.stateLabelObjs[state].click(function(e) {
 					if (!touchscreen) {
-						var state = $(this[0]).children("tspan").text();
+						var state = m.stateByRaphaelTextID[this.node.raphaelid];
 						$("#factStatePicker").val(state);
 						$("#factStatePicker").trigger("change");
 					}
@@ -110,19 +117,19 @@ var prisonMap = (function() {
 				
 				m.stateLabelObjs[state].hover(function(e) {
 					if (!touchscreen) {
-						var state = $(this[0]).children("tspan").text();
+						var state = m.stateByRaphaelTextID[this.node.raphaelid];
 						stateEnter(state);
 					}
 				},function(e) {
 					if (!touchscreen) {
-						var state = $(this[0]).children("tspan").text();
+						var state = m.stateByRaphaelTextID[this.node.raphaelid];
 						stateLeave(state);
 					}
 				});
 				
 				//store raphael IDs of each label
 				m.stateTextIDs[state] = m.stateLabelObjs[state].node.raphaelid;
-				
+				m.stateByRaphaelTextID[m.stateLabelObjs[state].node.raphaelid] = state;
 			}
 			
 			function setSelectors() {
@@ -133,6 +140,10 @@ var prisonMap = (function() {
 				}
 			}
 			setSelectors();
+			$("select").change(function(e) {
+				//fixes behavior on mobile phones where select element fires change without updating display until blur
+				$(this).blur();
+			});
 			
 			m.paper = Raphael(m.mapDivID,m.width,m.height);
 			
@@ -144,6 +155,21 @@ var prisonMap = (function() {
 					}
 				}
 			}
+			
+			$("textpath.rvml").attr("style","FONT: 18px \"Arial Narrow\"; v-text-align: center; v-text-kern: true"); //ugly ie8 hack
+			
+			function makeLines() {
+				function makeLine(lineNumber) {
+					var line = map_lines[lineNumber];
+					m.maplines[lineNumber] = m.paper.path(["M",line[0],line[1], "L", line[2],line[3]]);
+					m.maplines[lineNumber].attr({"stroke-width":0.5,"fill":"#888888"});
+				}	
+				m.maplines = [];
+				for (var i = 0;i<map_lines.length;i++) {
+					makeLine(i);
+				}
+			}
+			makeLines();
 			
 			m.activeDataset = "Inc_Rate";
 			
@@ -176,12 +202,19 @@ var prisonMap = (function() {
 				m.applyStateColors(0);
 				$("#yearSlider .ui-slider-handle").html("<span>" + year + "</span>");
 			}
+			
+			
+			$("#yearSelector").change(function(e) {
+				slideChangeFunc(null,{value:$(this).val()});
+			});
+		
 			$("#yearSlider").slider({
 				min: 1978,
 				max: 2013,
 				value: 1978,
 				slide: slideChangeFunc
 			});
+			
 			
 			slideChangeFunc(null,{value:1978});
 			
@@ -225,7 +258,7 @@ var prisonMap = (function() {
 				if (!touchscreen) {
 					var tag = $(e.target).prop("tagName");
 					if (initialized) {
-						if (tag == "path" || tag == "shape") {
+						if (tag == "path" || tag == "shape" || tag == "tspan") {
 							
 								m.mousePos.x = e.pageX - $("#map").offset().left;
 								m.mousePos.y = e.pageY - $("#map").offset().top;
@@ -235,12 +268,8 @@ var prisonMap = (function() {
 				}
 				
 			});
-			
-			
-			
+	
 			$("select#dataSet").trigger("change");
-			
-			
 			
 			
 			function drawSliderLines() {
@@ -257,7 +286,16 @@ var prisonMap = (function() {
 					$("#yearSlider .hLine").append("<div class=\"vLine\" style=\"" + style + "\">");
 				}
 			}
-			drawSliderLines();
+			function makeYearSelector() {
+				for (var year=1978;year<=2013;year++) {
+					$("#yearSelector").append("<option value=\"" + year + "\">" + year + "</option>");
+				}
+			}
+		
+				makeYearSelector();
+			
+				drawSliderLines();
+			
 			
 			m.makeCharts("Total");
 			
@@ -322,9 +360,7 @@ var prisonMap = (function() {
 			
 				m.transformString = "s" + m.path_scale + "," + m.path_scale + ",0,0";
 				m.textTransformString = "s" + m.text_scale + "," + m.text_scale + ",0,0";
-				
-				
-				
+			
 				if (initialized == true) m.applyNewTransform();
 			},
 			
@@ -416,8 +452,6 @@ var prisonMap = (function() {
 				$("<div id='flotTooltip'></div>").appendTo("body");
 				
 				var tooltipDisplayFunction = function(item, chartID) {
-					console.log(item);
-					console.log(chartID);
 					var format, css;
 					css = {top: item.pageY + 5};
 					if (chartID == "incarcerationGraphArea") {
@@ -445,6 +479,8 @@ var prisonMap = (function() {
 				
 				
 				var plotTouchFunc = function(e,div,plot) {
+					m.leftPlot.unhighlight();
+					m.rightPlot.unhighlight();
 					clearTimeout(m.flotTooltipTimer);
 					var offset = plot.offset();
 					var x = e.originalEvent.touches[0].pageX - offset.left;
@@ -456,8 +492,7 @@ var prisonMap = (function() {
 						pageY: e.originalEvent.touches[0].pageY,
 						datapoint: [year,y]
 					}
-					m.leftPlot.unhighlight();
-					m.rightPlot.unhighlight();
+					
 					plot.highlight(0,year-data[0][0]);
 					tooltipDisplayFunction(fakeItem,$(div).parents(".chartArea").attr("id"));
 					m.flotTooltipTimer = setTimeout(function() {
@@ -511,7 +546,7 @@ var prisonMap = (function() {
 			popupState: function(state) {
 				if (state != "none") {
 					var coords = [m.mousePos.x,m.mousePos.y];
-					if (touchscreen) coords = m.utilities.pathCenter(m.stateObjs[state]);
+					if (touchscreen) coords = m.getTextCoords(state);
 					var popup = $("<div class=\"popup\" style=\"display:none\">");
 					m.fadeoutPopups();
 					popup.html(m.popupTemplate(state));
@@ -560,6 +595,19 @@ var prisonMap = (function() {
 				return htmlString;
 			},
 			
+			getTextCoords: function(state) {
+				var coords = m.utilities.pathCenter(m.stateObjs[state]);
+				if (text_configs.offset[state]) {
+					coords[0] += text_configs.offset[state][0];
+					coords[1] += text_configs.offset[state][1];
+				}
+				if (text_configs.absOffset[state]) {
+					coords[0] = text_configs.absOffset[state][0];
+					coords[1] = text_configs.absOffset[state][1];
+				}
+				return coords;
+			},
+			
 			switchDisplay: function(state) {
 				
 			},
@@ -573,6 +621,8 @@ var prisonMap = (function() {
 			stateTextIDs: {},
 			
 			stateCodes: {},
+			
+			stateByRaphaelTextID: {},
 			
 			utilities: {
 				pathCenter: function(p) {
