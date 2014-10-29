@@ -237,6 +237,7 @@ var prisonMap = (function() {
 			});
 			
 			$("#map").on("click touchstart","div.popup",function(e) {
+				e.preventDefault();
 				if (touchscreen) {
 					console.log("fade!");
 					m.fadeoutPopups();	
@@ -318,6 +319,7 @@ var prisonMap = (function() {
 				var state = $(this).val();
 				if (state == null || state == "") return false;
 				m.makeCharts(state);
+				m.reformTemplate(state);
 				var peakInc = Math.max.apply(Math,m.data.theData["Inc_Total"].data[state]);
 				var peakSpend = Math.max.apply(Math,m.data.theData["Spend_Total"].data[state]);
 				var peakIncIndex = $.inArray(peakInc,m.data.theData["Inc_Total"].data[state]);
@@ -462,11 +464,11 @@ var prisonMap = (function() {
 					if (chartID == "incarcerationGraphArea") {
 						format = format = m.data.meta["Inc_Total"].formatter;
 						css.left = item.pageX + 5;
-						css.right = "initial";
+						css.right = "auto";
 					} else {
 						format = m.data.meta["Spend_Total"].formatter;
 						css.right = $("body").width() - (item.pageX - 5);
-						css.left = "initial";
+						css.left = "auto";
 					}
 					var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
 					$("#flotTooltip").html("<strong>" + Math.round(x) + "</strong><br />" + format(y))
@@ -509,11 +511,13 @@ var prisonMap = (function() {
 				
 				$("#incarcerationGraphArea .chartCon").on("touchstart",function(e) {
 					touchscreen = true;
+					e.preventDefault();
 					plotTouchFunc(e,this,m.leftPlot);
 				});
 				
 				$("#spendingGraphArea .chartCon").on("touchstart",function(e) {
 					touchscreen = true;
+					e.preventDefault();
 					plotTouchFunc(e,this,m.rightPlot);
 				});
 				
@@ -584,7 +588,7 @@ var prisonMap = (function() {
 				if (typeof(m.data.theData[m.activeDataset].data[state]) == "undefined") return "No data";
 				var htmlString = "";
 				
-				htmlString += "<h4>" + m.data.stateNames[state] + "</h4>";
+				htmlString += "<h4>" + m.data.stateNames[state] + ", " + m.activeYear + "</h4>";
 				htmlString += "<ul>";
 				for (var dataSet in m.data.meta) {
 					year = m.activeYear - m.data.theData[dataSet].startYear;
@@ -598,6 +602,47 @@ var prisonMap = (function() {
 				}
 				htmlString += "</ul>";
 				return htmlString;
+			},
+			
+			reformTemplate: function(state) {
+				var reforms,reform,i,htmlString,yTrack,ul,li,hitReform, scrollDiv;
+				reforms = m.data.reforms[state];
+				scrollDiv = $("div.reformScroll");
+				if (state == "Total") {
+					scrollDiv.text(" Click on a state to view recent reforms.");
+					return;	
+				}
+				if (reforms) {
+					reforms.sort(function(a,b) {
+						return b.year - a.year;
+					});
+					
+					scrollDiv.html("");
+					yTrack = 0;
+					for (i = 0;i<reforms.length;i++) {
+						reform = reforms[i];
+						if (yTrack != reform.year) {
+							if (i!=0) scrollDiv.append(ul);
+							scrollDiv.append("<p><strong>" + reform.year + ":</strong></p>");
+							ul = $("<ul></ul>");
+						}
+						li = $("<li></li>");
+						li.append("<strong>" + reform.bill + "</strong>: ");
+						hitReform = false;
+						for (var j=0;j<reform.reforms.length;j++) {
+							if (reform.reforms[j] == 1) {
+								if (hitReform) li.append(", ");
+								li.append(m.data.reformNames[j]);
+								hitReform = true;	
+							}
+						}
+						ul.append(li);
+						if (i == reforms.length-1) scrollDiv.append(ul);
+						yTrack = reform.year;
+					}	
+				} else {
+					scrollDiv.html("No recent reforms noted");
+				}
 			},
 			
 			getTextCoords: function(state) {

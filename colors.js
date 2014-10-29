@@ -134,7 +134,7 @@
 				if (duration == 0) m.stateObjs[state].attr("fill",m.stateColors[state]);
 				else toAnimate[state] = m.stateColors[state];
 				if (m.stateLabelObjs[state]) {
-					if (brightness(m.stateColors[state]) < 400) {
+					if (brightness(m.stateColors[state]) < 200) {
 						m.stateLabelObjs[state].attr("fill","#ffffff");	
 					} else {
 						m.stateLabelObjs[state].attr("fill","#000000");	

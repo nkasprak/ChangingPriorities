@@ -99,7 +99,7 @@ select#stateLocal {
 	margin-left:auto;
 	margin-right:auto;
 	width: 525px;	
-	visibility:hidden;
+	/*visibility:hidden;*/
 }
 
 #yearSlider {
@@ -242,6 +242,8 @@ select#stateLocal {
 	 -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
 }
 
+
+
 #facts {
 	margin-top:30px;
 	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
@@ -259,9 +261,32 @@ select#stateLocal {
 }
 
 #facts .leftColumn {
-	width:47%;	
+	width:48%;	
 	float:left;
 	height:100%;
+}
+
+#facts .reformScroll {
+	height:100px;
+	overflow-y:auto;	
+}
+#facts .reformScroll p {
+	margin-top:0px;
+	padding-top:0px;
+	margin-bottom:0px;
+	padding-bottom:0px;
+}
+
+#facts .reformScroll ul {
+	margin-top:0px;
+	padding-top:0px;
+	padding-left:20px;
+	margin-bottom:0px;
+}
+
+#facts .reformScroll ul li {
+	margin-left:0px;
+	padding-left:0px;
 }
 
 #facts .rightColumn {
