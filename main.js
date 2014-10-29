@@ -18,9 +18,16 @@ var prisonMap = (function() {
 		});
 		var initialize = function() {
 			
+			if (is_legacy_ie == true) {
+				$("#wrapper").prepend("<div class=\"ie8warn\"><strong>Note:</strong> You are using an old, unsupported version of Internet Explorer. Some elements of this graphic will not display correctly. &nbsp;<button id=\"ie8Okay\">OK</button></div>");	
+			}
+			
+			$("#ie8Okay").click(function() {
+				$(".ie8warn").slideUp(400);
+			});
+			
 			function makeState(state) {
 				var pathString = map_paths[state].path;
-				
 				
 				m.stateObjs[state] = m.paper.path(pathString);
 				m.stateObjs[state].transform(m.transformString);
@@ -97,8 +104,8 @@ var prisonMap = (function() {
 				m.stateLabelObjs[state].attr({
 					"font-size":18,
 					"font-family":$("#" + m.mapDivID).css("font-family")
-					//"font-family":"Arial Narrow"
 				});
+				
 				
 				m.stateLabelObjs[state].click(function(e) {
 					if (!touchscreen) {
@@ -155,8 +162,6 @@ var prisonMap = (function() {
 					}
 				}
 			}
-			
-			$("textpath.rvml").attr("style","FONT: 18px \"Arial Narrow\"; v-text-align: center; v-text-kern: true"); //ugly ie8 hack
 			
 			function makeLines() {
 				function makeLine(lineNumber) {
@@ -249,7 +254,7 @@ var prisonMap = (function() {
 					if (tag == "svg") {
 						clearTimeout(m.fadeTimer);
 						clearTimeout(m.popupTimer);
-						m.fadeoutPopups();
+						m.fadeTimer = setTimeout(m.fadeoutPopups,200);
 					}
 				}
 			});
@@ -319,7 +324,7 @@ var prisonMap = (function() {
 				var peakIncYear = peakIncIndex + m.data.theData["Inc_Total"].startYear;
 				var peakSpendIndex = $.inArray(peakSpend,m.data.theData["Spend_Total"].data[state]);
 				var peakSpendYear = peakSpendIndex + m.data.theData["Spend_Total"].startYear;
-				
+				$("#facts span.keyStateTitle").text(m.data.stateNames[state]);
 				$("#peakIncYear").html(Math.round(peakIncYear));
 				$("#peakInc").html(m.utilities.commaSeparateNumber(peakInc));
 				$("#peakIncRate").html(m.data.meta["Inc_Rate"].formatter(m.data.theData["Inc_Rate"].data[state][peakIncIndex]));
@@ -551,14 +556,14 @@ var prisonMap = (function() {
 					m.fadeoutPopups();
 					popup.html(m.popupTemplate(state));
 					if (coords[1] < m.height/2) {
-						popup.css("top",coords[1]);
+						popup.css("top",coords[1]+2);
 					} else {
-						popup.css("bottom",m.height - coords[1]);
+						popup.css("bottom",m.height - coords[1]+2);
 					}
 					if (coords[0] < m.width/2) {
-						popup.css("left",coords[0]);
+						popup.css("left",coords[0]+2);
 					} else {
-						popup.css("right",m.width - coords[0]);
+						popup.css("right",m.width - coords[0]+2);
 					}
 					$("#map").append(popup);
 					popup.fadeIn(200);

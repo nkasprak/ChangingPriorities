@@ -6,6 +6,14 @@
 <title>Changing Priorities</title>
 <link rel="stylesheet" type="text/css" href="jquery-ui-1.11.2.custom/jquery-ui.min.css" />
 <link rel="stylesheet" type="text/css" href="changingpriorities.css" />
+<script>
+var is_legacy_ie = false;
+</script>
+<!--[if lte IE 8]>
+<script>
+is_legacy_ie = true;
+</script>
+<![endif]-->
 <script src="//use.typekit.net/hre4yus.js"></script>
 <script type ="text/javascript" src="fontloader.js"></script>
 <script type="text/javascript" src="flot/excanvas.min.js"></script>
@@ -17,8 +25,8 @@
   <p class="titleBlurb">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id dictum
     nisi, at pulvinar sapien. Sed placerat odio ipsum, risus fermentum
     condimentum. Donec ac tempor elit. Fusce lobortis lacus at malesuada.</p>
-  <h3 class="title">Incarceration Rates by Year</h3>
-  <p class="download">(download data)</p>
+  <h3 class="title">State Imprisonment Rates by Year <span class="download">(download data)</span></h3>
+  
   <div class="noTouchscreen">
   <div id="yearSlider">
     <div class="hLine"></div>
@@ -44,7 +52,8 @@
     </div>
   </div>
   <div id="facts">
-    <h3 class="title">Key state stats &nbsp;
+    <h3 class="title"><!--Key state stats -->&nbsp;
+       <span class="keyStateTitle">United States</span>
       <select id="factStatePicker">
       </select>
     </h3>
