@@ -586,6 +586,7 @@ var prisonMap = (function() {
 				var formatter, year;
 				
 				if (typeof(m.data.theData[m.activeDataset].data[state]) == "undefined") return "No data";
+			
 				var htmlString = "";
 				
 				htmlString += "<h4>" + m.data.stateNames[state] + ", " + m.activeYear + "</h4>";
@@ -605,41 +606,28 @@ var prisonMap = (function() {
 			},
 			
 			reformTemplate: function(state) {
-				var reforms,reform,i,htmlString,yTrack,ul,li,hitReform, scrollDiv;
-				reforms = m.data.reforms[state];
+				var reforms,reform,i,j,htmlString,yTrack,ul,li,hitReform, scrollDiv, reformData;
+				reformData = m.data.reformsByType()[state];
 				scrollDiv = $("div.reformScroll");
+				scrollDiv.text("");
 				if (state == "Total") {
 					scrollDiv.text(" Click on a state to view recent reforms.");
 					return;	
 				}
-				if (reforms) {
-					reforms.sort(function(a,b) {
-						return b.year - a.year;
-					});
-					
-					scrollDiv.html("");
-					yTrack = 0;
-					for (i = 0;i<reforms.length;i++) {
-						reform = reforms[i];
-						if (yTrack != reform.year) {
-							if (i!=0) scrollDiv.append(ul);
-							scrollDiv.append("<p><strong>" + reform.year + ":</strong></p>");
-							ul = $("<ul></ul>");
-						}
-						li = $("<li></li>");
-						li.append("<strong>" + reform.bill + "</strong>: ");
-						hitReform = false;
-						for (var j=0;j<reform.reforms.length;j++) {
-							if (reform.reforms[j] == 1) {
-								if (hitReform) li.append(", ");
-								li.append(m.data.reformNames[j]);
-								hitReform = true;	
+				if (reformData) {
+					console.log(reformData);
+					for (i=0;i<reformData.length;i++) {
+						if (reformData[i].length > 0) {
+							scrollDiv.append("<p>" + m.data.reformNames[i] + ":</p>");
+							ul = $("<ul>");
+							for (j=0;j<reformData[i].length;j++) {
+								li = $("<li>");
+								li.html("<b>" + reformData[i][j].bill + "</b> (" + reformData[i][j].year + ")");
+								ul.append(li);
 							}
+							scrollDiv.append(ul);
 						}
-						ul.append(li);
-						if (i == reforms.length-1) scrollDiv.append(ul);
-						yTrack = reform.year;
-					}	
+					}
 				} else {
 					scrollDiv.html("No recent reforms noted");
 				}

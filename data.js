@@ -388,6 +388,30 @@
 			"WV":[{bill:"SB 371",year:2013,reforms:[1,1,1,1,0,0]},
 			{bill:"SB 423",year:2013,reforms:[1,0,0,0,0,0]}]
 		},
+		reformsByType: function() {
+			var reforms = m.data.reforms;
+			var byType = {}, billList, reform, bill, state, i, j;
+			for (state in reforms) {
+				byType[state] = [];
+				billList = reforms[state];
+				for (i=0;i<billList.length;i++) {
+					bill = billList[i];
+					for (j = 0;j<bill.reforms.length;j++) {
+						reform = bill.reforms[j];
+						if (typeof(byType[state][j]) == "undefined") {
+							byType[state][j] = [];
+						}
+						if (reform == 1) byType[state][j].push({bill: bill.bill, year: bill.year});
+					}
+				}
+				for (var j = 0;j<reforms[state][0].reforms.length;j++) {
+					byType[state][j].sort(function(a,b) {
+						return b.year - a.year;
+					});
+				}
+			}
+			return byType;
+		},
 		reformNames : [
 			"Reducing time served in prison or on community supervision",	
 			"Expanding or strengthening community corrections",	
