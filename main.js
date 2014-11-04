@@ -187,7 +187,7 @@ var prisonMap = (function() {
 				m.legendLeftText = m.legendPaper.text(0,height*.7,"").attr({'text-anchor':'start'});
 				m.legendRightText = m.legendPaper.text(width,height*.7,"").attr({'text-anchor':'end'});
 				m.legendMiddleText = m.legendPaper.text(width*.5,height*.5,"");
-				
+				m.legendLabel = m.legendPaper.text(width*.5,height*.7,"");
 				
 				var attrs = {
 					"font-size":18,
@@ -196,7 +196,8 @@ var prisonMap = (function() {
 				m.legendLeftText.attr(attrs);
 				m.legendRightText.attr(attrs);
 				m.legendMiddleText.attr(attrs);
-				
+				m.legendLabel.attr(attrs);
+				m.legendLabel.attr({"font-size":14});
 			}
 			makeLegend();
 			
@@ -303,11 +304,11 @@ var prisonMap = (function() {
 				drawSliderLines();
 			
 			
-			m.makeCharts("Total");
+			m.makeCharts("US");
 			
 			(function() {
 				var option;
-				$("#factStatePicker").append("<option value=\"Total\">U.S. Total</option>");
+				$("#factStatePicker").append("<option value=\"US\">U.S. Total</option>");
 				for (var state in m.data.stateNames) {
 					option = $("<option value=\"" + state + "\">" + m.data.stateNames[state] + "</option>");
 					$("#factStatePicker").append(option);
@@ -391,6 +392,7 @@ var prisonMap = (function() {
 			
 			makeCharts: function(selected_state) {
 				if (selected_state == null || selected_state == "") return false;
+				
 				function makeFlotData(dIndex) {
 					var data = [];
 					var baseData = m.data.theData[dIndex].data[selected_state];
@@ -610,7 +612,7 @@ var prisonMap = (function() {
 				reformData = m.data.reformsByType()[state];
 				scrollDiv = $("div.reformScroll");
 				scrollDiv.text("");
-				if (state == "Total") {
+				if (state == "US") {
 					scrollDiv.text(" Click on a state to view recent reforms.");
 					return;	
 				}

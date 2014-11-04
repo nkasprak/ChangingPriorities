@@ -114,6 +114,7 @@
 	
 	m.applyStateColors = function(duration) {
 		var formatter = m.data.meta[m.activeDataset].formatter;
+		if (m.data.meta[m.activeDataset].legendFormatter) formatter = m.data.meta[m.activeDataset].legendFormatter;
 		if (typeof(duration)=="undefined") duration = 0;
 		if (duration > 0) toAnimate = {};
 		function brightness(hexcolor) {
@@ -129,6 +130,7 @@
 		var year = m.activeYear - m.data.theData[m.activeDataset].startYear;
 		m.legendLeftText.attr({"text":formatter(m.data.meta[m.activeDataset].dataMin[year])});
 		m.legendRightText.attr({"text":formatter(m.data.meta[m.activeDataset].dataMax[year])});
+		if (m.data.meta[m.activeDataset].legendLabel) m.legendLabel.attr({"text":m.data.meta[m.activeDataset].legendLabel});
 		for (state in m.stateColors) {
 			if (m.stateObjs[state]) {
 				if (duration == 0) m.stateObjs[state].attr("fill",m.stateColors[state]);
