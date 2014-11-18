@@ -429,11 +429,12 @@
 				}
 			},
 			"Inc_Rate":{
-				shortName:"Incarceration Rate",
+				shortName:"Per 100,000 Residents",
 				formatter: function(data) {
-					data = Math.round(data)/1000;
+					/*data = Math.round(data)/1000;
 					data = data + "%";
-					return data;
+					return data;*/
+					return m.utilities.commaSeparateNumber(Math.round(data));
 				},
 				legendFormatter: function(data) {
 					return m.utilities.commaSeparateNumber(Math.round(data));
