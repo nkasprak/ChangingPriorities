@@ -452,7 +452,7 @@
 				}
 			},
 			"Spend_Share":{
-				shortName:"Share of Spending",
+				shortName:"Share of General Fund Spending",
 				formatter: function(data) {
 					//data = Math.round(data)/1000;
 					data = Math.round(data*10000)/100 + "%";

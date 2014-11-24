@@ -49,7 +49,7 @@ h3.title span.download {
 
 #titleArea {
 	padding:10px;
-	background-color:#eee;
+	/*background-color:#eee;*/
 }
 
 #titleArea p {
@@ -221,12 +221,13 @@ select#stateLocal {
 }
 
 #charts {
-	height:220px;	
+	height:240px;	
 }
 
 #charts .chartArea {
 	width:48%;
-	height:100%;
+	height:220px;
+	margin-top:20px;
 	position:relative;
 	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
 }
@@ -238,12 +239,24 @@ select#stateLocal {
 	width:113%;	
 }
 
+#charts .chartArea .title {
+	margin-top:0px;	
+}
+
 #incarcerationGraphArea {
 	float:left;
 }
 
 #spendingGraphArea {
 	float:right;
+}
+
+
+
+#spendingGraphArea .small {
+	font-size:12px;
+	font-weight:400;
+	font-family:"myriad-pro",helvetica,arial,sans-serif;	
 }
 
 #flotTooltip {
@@ -268,6 +281,7 @@ select#stateLocal {
 	border-top:1px solid #444;
 	border-bottom:1px solid #444;
 	padding:5px;
+	display:none; /*we're getting rid of this for now but it still works*/
 }
 
 #facts p, #facts h3  {
