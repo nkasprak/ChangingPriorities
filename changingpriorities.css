@@ -37,18 +37,19 @@ h1,h2,h3,h4,h5,h6 {
 h1 {font-size:21pt}
 h2 {font-size:16pt}
 h3 {font-size:14pt}
-h3.title {
+h1.title, h3.title {
 	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;
 	text-align:center;
 }
 
-h3.title span.download {
+h1.title span.download {
 	font-size:12pt;
 	font-weight:400;	
 }
 
 #titleArea {
 	padding:10px;
+	display:none;
 	/*background-color:#eee;*/
 }
 
@@ -117,6 +118,25 @@ select#stateLocal {
 	margin-right:auto;
 	width: 525px;	
 	/*visibility:hidden;*/
+}
+
+#instructionsPopup {
+	position:absolute;
+	top:20px;
+	left:5px;
+	z-index:100;
+	display:none;
+}
+
+#instructionsPopup .box {
+	background-color:#0081a4;
+	padding:5px;
+	color:#fff;
+	font-family:"myriad-pro-condensed",helvetica,arial,sans-serif;	
+	font-size:16pt;
+	position:relative;
+	top:-20px;
+	left:0px;
 }
 
 #yearSlider {
@@ -241,6 +261,10 @@ select#stateLocal {
 
 #charts .chartArea .title {
 	margin-top:0px;	
+}
+
+#charts .chartArea .title .total{
+	display:none;	
 }
 
 #incarcerationGraphArea {

@@ -26,6 +26,14 @@ var prisonMap = (function() {
 				$(".ie8warn").slideUp(400);
 			});
 			
+			m.instructionsTimer = setTimeout(function() {
+				$("#instructionsPopup").fadeIn(500,null,function() {
+					m.instructionsTimer = setTimeout(function() {
+						$("#instructionsPopup").fadeOut(500);
+					},3000);
+				});
+			},3000);
+			
 			function makeState(state) {
 				var pathString = map_paths[state].path;
 				
@@ -99,8 +107,9 @@ var prisonMap = (function() {
 			function makeText(coords,state) {
 				var coords = m.getTextCoords(state);
 				
-			
-				m.stateLabelObjs[state] = m.paper.text(coords[0],coords[1],state);
+				
+				if (typeof(text_configs.text_override[state])=="undefined") m.stateLabelObjs[state] = m.paper.text(coords[0],coords[1],state);
+				else m.stateLabelObjs[state] = m.paper.text(coords[0],coords[1],text_configs.text_override[state]);
 				m.stateLabelObjs[state].attr({
 					"font-size":18,
 					"font-family":$("#" + m.mapDivID).css("font-family")
@@ -203,6 +212,7 @@ var prisonMap = (function() {
 			
 			function slideChangeFunc(event, ui) {
 				var year = ui.value;
+				$("#instructionsPopup").fadeOut(500);
 				m.activeYear = year;
 				m.calcStateColors(m.activeDataset,m.activeYear);
 				m.applyStateColors(0);
@@ -239,8 +249,8 @@ var prisonMap = (function() {
 			
 			$("#map").on("click touchstart","div.popup",function(e) {
 				e.preventDefault();
-				if (touchscreen) {
-					console.log("fade!");
+				
+				if (touchscreen && !m.justTouched) {
 					m.fadeoutPopups();	
 				}
 				if (m.highlightedStates.length>0) {
@@ -308,7 +318,7 @@ var prisonMap = (function() {
 			
 			(function() {
 				var option;
-				$("#factStatePicker").append("<option value=\"US\">U.S. Total</option>");
+				$("#factStatePicker").append("<option value=\"US\">Total State</option>");
 				for (var state in m.data.stateNames) {
 					option = $("<option value=\"" + state + "\">" + m.data.stateNames[state] + "</option>");
 					$("#factStatePicker").append(option);
@@ -404,6 +414,14 @@ var prisonMap = (function() {
 				}
 				
 				$("#charts span.state").html(m.data.stateNames[selected_state]);
+				if (selected_state=="US") {
+					$("#charts span.total").hide();
+					$("#charts span.imprisonment").text("prison population");
+				}
+				else {
+					$("#charts span.total").show();
+					$("#charts span.imprisonment").text("imprisonment");	
+				}
 				
 				var initialLeftData = makeFlotData("Inc_Total");
 				var initialRightData = makeFlotData("Spend_Total");
@@ -504,11 +522,11 @@ var prisonMap = (function() {
 					
 					plot.highlight(0,year-data[0][0]);
 					tooltipDisplayFunction(fakeItem,$(div).parents(".chartArea").attr("id"));
-					m.flotTooltipTimer = setTimeout(function() {
+					/*m.flotTooltipTimer = setTimeout(function() {
 						$("#flotTooltip").hide();
 						m.leftPlot.unhighlight();
 						m.rightPlot.unhighlight();
-					},3000);
+					},3000);*/
 				}
 				
 				$("#incarcerationGraphArea .chartCon").on("touchstart",function(e) {
@@ -533,9 +551,9 @@ var prisonMap = (function() {
 			
 			setFadeoutTimer: function() {
 				clearTimeout(m.fadeTimer);
-				m.fadeTimer = setTimeout(function() {
+				/*m.fadeTimer = setTimeout(function() {
 					m.fadeoutPopups();
-				},3000);
+				},3000);*/
 			},
 			
 			fadeoutPopups : function() {
@@ -557,7 +575,13 @@ var prisonMap = (function() {
 			popupState: function(state) {
 				if (state != "none") {
 					var coords = [m.mousePos.x,m.mousePos.y];
-					if (touchscreen) coords = m.getTextCoords(state);
+					if (touchscreen) {
+						coords = m.getTextCoords(state);
+						m.justTouched = true;
+						m.touchTimer = setTimeout(function() {
+							m.justTouched = false;
+						},500);	
+					}
 					var popup = $("<div class=\"popup\" style=\"display:none\">");
 					m.fadeoutPopups();
 					popup.html(m.popupTemplate(state));
@@ -617,7 +641,6 @@ var prisonMap = (function() {
 					return;	
 				}
 				if (reformData) {
-					console.log(reformData);
 					for (i=0;i<reformData.length;i++) {
 						if (reformData[i].length > 0) {
 							scrollDiv.append("<p>" + m.data.reformNames[i] + ":</p>");

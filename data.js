@@ -283,7 +283,7 @@
 			"WV":"West Virginia",
 			"WI":"Wisconsin",
 			"WY":"Wyoming",
-			"US":"U.S."
+			"US":"Total state"
 		},
 		reforms: {
 			"AL":[{bill:"HB 494",year:2013,reforms:[0,1,0,0,0,0]}],
@@ -423,7 +423,7 @@
 		],
 		meta : {
 			"Inc_Total":{
-				shortName:"Total Incarceration",
+				shortName:"People in state prison",
 				formatter: function(val) {
 					return m.utilities.commaSeparateNumber(Math.round(val));
 				}

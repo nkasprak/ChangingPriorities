@@ -22,14 +22,15 @@ is_legacy_ie = true;
 <body>
 <div id="wrapper">
 	<div id="titleArea">
-  <h1>The Rise in State Incarceration Rates</h1>
-  <p class="titleBlurb">Most states’ prison populations are at historic highs after decades of extraordinary growth. This rapid growth has been costly: corrections spending is now the third-largest category of spending in most states, behind education and health. Click on the map below to learn more about the growth in prison populations and spending in each state over the past 35 years.</p>
+  <!--<h1>The Rise in State Prison Populations</h1>
+  <p class="titleBlurb">Most states’ prison populations are at historic highs after decades of extraordinary growth. This rapid growth has been costly, limiting economic opportunity for whole communities and taking critical resources from other important investments such as education. Click on the map below to learn more about the growth in prison populations and spending in each state over the past 35 years.</p>-->
     </div>
     <!--<hr class="dotted" />-->
-  <h3 class="title">State Incarceration Rates by Year <span class="download">(download data)</span></h3>
+  <h1 class="title">State Imprisonment Rates by Year <span class="download"><a href="cbpp_imprisonment_data.xls">(download data)</a></span></h1>
   
   <div class="noTouchscreen">
   <div id="yearSlider">
+  	<div id="instructionsPopup"><img src="triangle.png" alt=""/><div class="box">Click and drag to change the year</div></div>
     <div class="hLine"></div>
   </div>
   </div>
@@ -44,11 +45,11 @@ is_legacy_ie = true;
   </div>
   <div id="charts">
     <div id="incarcerationGraphArea" class="chartArea">
-      <h3 class="title"><span class="state">U.S.</span> total imprisonments</h3>
+      <h3 class="title"><span class="state">Total state</span> <span class="total">total</span> <span class="imprisonment">prison population</span></h3>
       <div class="chartCon"></div>
     </div>
     <div id="spendingGraphArea" class="chartArea">
-      <h3 class="title"><span class="state">U.S.</span> total spending <br /><span class="small">(2013 Dollars)</span></h3>
+      <h3 class="title"><span class="state">Total state</span> <span class="total">total</span> spending <br /><span class="small">(2013 Dollars)</span></h3>
       <div class="chartCon"></div>
     </div>
   </div>
@@ -79,7 +80,7 @@ is_legacy_ie = true;
   <div class="credits">
     <div class="embedCode">
       <p><strong>Embed code:</strong> <span class="embedLink">(Close)</span></p>
-      <div class="embedCodeArea">&lt;iframe src=&quot;<span class="embedDomain"></span>&quot; frameborder=&quot;0&quot; width=&quot;525&quot; height=&quot;1260&quot; scrolling=&quot;no&quot; &gt;&lt;/iframe&gt;</div>
+      <div class="embedCodeArea">&lt;iframe src=&quot;<span class="embedDomain"></span>&quot; frameborder=&quot;0&quot; width=&quot;525&quot; height=&quot;850&quot; scrolling=&quot;no&quot; &gt;&lt;/iframe&gt;</div>
     </div>
     <p class="embedLink">Embed this graphic on your own site </p>
     <p>CBPP data visualization by <a href="http://www.cbpp.org/about/index.cfm?fa=view&id=234" target="_blank">Nick Kasprak</a>, <a href="http://www.cbpp.org/experts/?fa=view&id=232" target="_blank">Michael Mitchell</a>, and <a href="http://www.cbpp.org/about/index.cfm?fa=view&id=229" target="_blank">Rob Cady</a></p>
